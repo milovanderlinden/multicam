@@ -5,3 +5,5 @@ authors = ["Verbindelaar"]
 
 [dependencies]
 eye = "0.4.1" # Simply used to find video devices.
+log = "0.4"
+log4rs = "1.0.0"
