@@ -6,4 +6,3 @@ authors = ["Verbindelaar"]
 [dependencies]
 eye = "0.4.1"
 rscam = "0.5.5"
-mp4 = "0.9.0"
