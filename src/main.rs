@@ -1,11 +1,9 @@
 #[cfg(not(any(target_os = "linux", target_os = "freebsd")))]
 compile_error!("multicam (v4l2) is for linux/freebsd only");
 extern crate eye;
-extern crate rscam;
 use eye::prelude::*;
-use rscam::{Camera, Config};
-use std::{fs::{self}, io::{Write}, thread, time};
-
+use std::{thread, time};
+use std::process::{Command};
 
 /**
  * Main function
@@ -33,33 +31,24 @@ fn main() {
             thread::Builder::new()
                 .name(format!("multicam{}", _name))
                 .spawn(move || -> ! {
-
-                    // Initialize the camera reader
-                    let mut camera = Camera::new(&_device).expect("Failed to open video device");
-
-                    // Start the camera
-                    camera
-                        .start(&Config {
-                            interval: (1, 30), // 30 fps.
-                            resolution: (1280, 720),
-                            format: b"MJPG",
-                            ..Default::default()
-                        })
-                        .expect("not a valid camera interface");
-
-                    // Create file to hold the frame
-                    let mut _jpeg_file = fs::File::create(&_jpeg).unwrap();
-                    //let mut _video_file = fs::File::create(&_mp4).unwrap();
-
-                    // Grab the frames and write them to a file
+                    let _command = Command::new("ffmpeg")
+                        .args([
+                            "-y",
+                            "-loglevel", 
+                            "quiet",
+                            "-f",
+                            "v4l2",
+                            "-video_size",
+                            "1280x720",
+                            "-i",
+                            &_device.to_owned(),
+                            &_mp4.to_owned()
+                        ])
+                        .spawn()
+                        .expect("failed to execute process");
                     loop {
-                        let frame = camera.capture().unwrap();
-                        //println!("{} - {} => {}", frame.get_timestamp(), _device, _jpeg);
-                        _jpeg_file.write_all(&frame[..]).unwrap();
-                        //_video_file.write_all(b"P5\n2448 2048\n255\n").unwrap();
-                        //_video_file.write_all(&frame).unwrap();
-                    }
-
+                    } // keep running.
+                    
                 }),
         );
     });
@@ -68,7 +57,7 @@ fn main() {
 
     loop {
         thread::sleep(ten_millis);
-        println!("Multicam is running");
+        println!("Multicam is running with {:?} cameras", threads.len());
     }
 
 }

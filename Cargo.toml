@@ -4,5 +4,4 @@ version = "0.1.0"
 authors = ["Verbindelaar"]
 
 [dependencies]
-eye = "0.4.1"
-rscam = "0.5.5"
+eye = "0.4.1" # Simply used to find video devices.
