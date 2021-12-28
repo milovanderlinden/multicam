@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # FFmpeg is an audio/video conversion tool
 # ADDED RICO sleep allows pi to start services before grabbing videostreams
 # for x line checks to see which videostreams are outputting data from usb
@@ -16,28 +17,8 @@
 # vcodec en acodec copy kopieren een op een zonder de video te transformeren (sneller)
 # ~/Videos.. naming convention
 
-# sleep 1
-# cd /home/pi
-for x in /dev/video*; do
-  m=$( echo $x | grep -oP "\\d+")
-  ffmpeg -y \
-    -i ${x} \
-    -nostdin \
-    -loglevel quiet \
-    -f segment \
-    -strftime 1 \
-    -reset_timestamps 1 \
-    -segment_time 60 \
-    -vcodec copy \
-    -acodec copy \
-    ~/Videos/video${m}-%Y%m%d-%H%M%S.mp4 2> /dev/null &
-done
-
---
-dit is het script wat ik net gebruikte op de terug ingespoelde image.
-
-#!/bin/bash
 sleep 1
+cd /home/pi
 for x in /dev/video*; do
   m=$( echo $x | grep -oP "\\d+")
   ffmpeg -y \
@@ -50,5 +31,5 @@ for x in /dev/video*; do
     -segment_time 30 \
     -vcodec copy \
     -acodec copy \
-    ~/Videos/helmcam${m}-%Y%m%d-%H%M%S.mp4 2> /dev/null &
+    ~/Videos/hemlcam${m}-%Y%m%d-%H%M%S.mp4 2> /dev/null &
 done
